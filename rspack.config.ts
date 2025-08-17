@@ -1,7 +1,7 @@
 import { defineConfig } from '@rspack/cli';
 import { rspack } from '@rspack/core';
 import { ReactRefreshRspackPlugin } from '@rspack/plugin-react-refresh';
-const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
+import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -21,6 +21,10 @@ export default defineConfig({
         test: /\.svg$/,
         type: 'asset',
       },
+        {
+          test: /\.(png|jpe?g|gif)$/i,
+          type: 'asset/resource',
+        },
       {
         test: /\.(jsx?|tsx?)$/,
         use: [
