@@ -4,40 +4,24 @@ import { ReactRefreshRspackPlugin } from '@rspack/plugin-react-refresh';
 import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 
 const isDev = process.env.NODE_ENV === 'development';
-const isProd = process.env.NODE_ENV === 'production';
 
 // Target browsers, see: https://github.com/browserslist/browserslist
 const targets = ['last 2 versions', '> 0.2%', 'not dead', 'Firefox ESR'];
 
 export default defineConfig({
-  mode: isProd ? 'production' : 'development',
-  devtool: isDev ? 'eval-cheap-module-source-map' : 'source-map',
   devServer: {
     proxy: [
       {
         context: ['/api'],
         target: 'http://localhost:4000',
-        changeOrigin: true,
       },
     ],
-    compress: true,
-    historyApiFallback: true,
-    hot: true,
   },
   entry: {
     main: './src/main.tsx',
   },
-  output: {
-    filename: isProd ? '[name].[contenthash:8].js' : '[name].js',
-    chunkFilename: isProd ? '[name].[contenthash:8].js' : '[name].js',
-    assetModuleFilename: 'assets/[name].[contenthash:8][ext]',
-    clean: true,
-  },
   resolve: {
     extensions: ['...', '.ts', '.tsx', '.jsx'],
-    alias: {
-      '@': './src',
-    },
   },
   module: {
     rules: [
@@ -46,17 +30,11 @@ export default defineConfig({
         type: 'asset',
       },
       {
-        test: /\.(png|jpe?g|gif|webp|avif)$/i,
+        test: /\.(png|jpe?g|gif|webp)$/i,
         type: 'asset/resource',
-        generator: {
-          filename: isProd
-            ? 'assets/images/[name].[contenthash:8][ext]'
-            : 'assets/images/[name][ext]',
-        },
       },
       {
         test: /\.(jsx?|tsx?)$/,
-        exclude: /node_modules/,
         use: [
           {
             loader: 'builtin:swc-loader',
@@ -74,10 +52,7 @@ export default defineConfig({
                   },
                 },
               },
-              env: {
-                targets,
-              },
-              minify: isProd,
+              env: { targets },
             },
           },
         ],
@@ -93,8 +68,6 @@ export default defineConfig({
     isDev ? new ReactRefreshRspackPlugin() : null,
   ].filter(Boolean),
   optimization: {
-    minimize: isProd,
-    sideEffects: false,
     splitChunks: {
       chunks: 'all',
       minSize: 20000,
@@ -105,7 +78,6 @@ export default defineConfig({
           name: 'vendor.react',
           chunks: 'initial',
           priority: 20,
-          enforce: true,
         },
         tanstack: {
           test: /[\\/]node_modules[\\/]@tanstack[\\/]/,
@@ -124,14 +96,12 @@ export default defineConfig({
           name: 'vendor.async',
           chunks: 'async',
           priority: 5,
-          minChunks: 1,
         },
         defaultVendors: {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendor.others',
           chunks: 'initial',
           priority: 1,
-          minChunks: 1,
         },
       },
     },
@@ -144,10 +114,5 @@ export default defineConfig({
   },
   experiments: {
     css: true,
-  },
-  performance: {
-    hints: isProd ? 'warning' : false,
-    maxAssetSize: 250000, // 250KB
-    maxEntrypointSize: 400000, // 400KB
   },
 });
