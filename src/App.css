@@ -22,20 +22,16 @@
   margin-bottom: 2rem;
   box-shadow: 0 8px 32px rgba(99,102,241,0.12);
 }
-.hero-logo {
-  height: 5em;
-  margin-bottom: 1rem;
-  filter: drop-shadow(0 0 2em #6366f1aa);
-}
 .hero-title {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
 }
-.hero-subtitle {
-  font-size: 1.25rem;
+.current-date {
+  font-size: 1.1rem;
   font-weight: 400;
   opacity: 0.9;
+  margin: 0;
 }
 
 .main-image-section {
@@ -48,6 +44,11 @@
   max-width: 1000px;
   border-radius: 1rem;
   box-shadow: 0 4px 24px rgba(60,60,60,0.08);
+  /* Image optimization */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: optimize-contrast;
+  object-fit: cover;
+  height: auto;
 }
 
 .movie-list-section {
@@ -98,6 +99,10 @@
   border-radius: 0.75rem;
   margin-right: 1.5rem;
   box-shadow: 0 2px 8px rgba(60,60,60,0.08);
+  /* Image optimization */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: optimize-contrast;
+  image-rendering: crisp-edges;
 }
 .movie-details {
   text-align: left;
@@ -141,6 +146,13 @@
   }
   .movie-thumbnail {
     margin-right: 0;
+    margin-bottom: 1rem;
+  }
+  .main-image {
+    max-width: 100%;
+    height: auto;
+  }
+  .main-image-section {
     margin-bottom: 1rem;
   }
 }
