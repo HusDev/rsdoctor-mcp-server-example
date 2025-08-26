@@ -9,6 +9,14 @@ const isDev = process.env.NODE_ENV === 'development';
 const targets = ['last 2 versions', '> 0.2%', 'not dead', 'Firefox ESR'];
 
 export default defineConfig({
+  devServer: {
+    proxy: [
+      {
+        context: ['/api'],
+        target: 'http://localhost:4000',
+      },
+    ],
+  },
   entry: {
     main: './src/main.tsx',
   },
@@ -21,10 +29,10 @@ export default defineConfig({
         test: /\.svg$/,
         type: 'asset',
       },
-        {
-          test: /\.(png|jpe?g|gif)$/i,
-          type: 'asset/resource',
-        },
+      {
+        test: /\.(png|jpe?g|gif|webp)$/i,
+        type: 'asset/resource',
+      },
       {
         test: /\.(jsx?|tsx?)$/,
         use: [
@@ -55,10 +63,48 @@ export default defineConfig({
     new rspack.HtmlRspackPlugin({
       template: './index.html',
     }),
-    process.env.RSDOCTOR && new RsdoctorRspackPlugin({}),
+    process.env.RSDOCTOR &&
+      new RsdoctorRspackPlugin({ supports: { generateTileGraph: true } }),
     isDev ? new ReactRefreshRspackPlugin() : null,
   ].filter(Boolean),
   optimization: {
+    splitChunks: {
+      chunks: 'all',
+      minSize: 20000,
+      maxSize: 150000,
+      cacheGroups: {
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+          name: 'vendor.react',
+          chunks: 'initial',
+          priority: 20,
+        },
+        tanstack: {
+          test: /[\\/]node_modules[\\/]@tanstack[\\/]/,
+          name: 'vendor.tanstack',
+          chunks: 'async',
+          priority: 15,
+        },
+        dayjs: {
+          test: /[\\/]node_modules[\\/]dayjs[\\/]/,
+          name: 'vendor.dayjs',
+          chunks: 'initial',
+          priority: 10,
+        },
+        asyncVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor.async',
+          chunks: 'async',
+          priority: 5,
+        },
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor.others',
+          chunks: 'initial',
+          priority: 1,
+        },
+      },
+    },
     minimizer: [
       new rspack.SwcJsMinimizerRspackPlugin(),
       new rspack.LightningCssMinimizerRspackPlugin({
