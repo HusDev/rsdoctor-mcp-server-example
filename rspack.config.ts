@@ -55,7 +55,7 @@ export default defineConfig({
     new rspack.HtmlRspackPlugin({
       template: './index.html',
     }),
-    process.env.RSDOCTOR && new RsdoctorRspackPlugin({}),
+    process.env.RSDOCTOR && new RsdoctorRspackPlugin({ supports: { generateTileGraph: true } }),
     isDev ? new ReactRefreshRspackPlugin() : null,
   ].filter(Boolean),
   optimization: {
